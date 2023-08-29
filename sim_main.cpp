@@ -130,3 +130,4 @@ int main(int argc, char** argv) {
     // Don't use exit() or destructor won't get called
     return 0;
 }
+

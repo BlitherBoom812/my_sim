@@ -5,3 +5,11 @@
 obj_*
 logs
 *~undo-tree~
+CMakeFiles
+.cache
+CMakeCache.txt
+Makefile
+*.cmake
+compile_commands.json
+my_sim
+README.html
