@@ -28,11 +28,13 @@ module top
    initial begin
       test_signal = 1;
    end
+/* verilator lint_off STMTDLY */
+/* verilator lint_off INFINITELOOP */
    initial begin
       forever
 	#(1) test_signal = ~test_signal;
    end
-   
+/* verilator lint_on STMTDLY */
    // Connect up the outputs, using some trivial logic
    assign out_small = ~reset_l ? '0 : (in_small + 2'b1);
    assign out_quad  = ~reset_l ? '0 : (in_quad + 40'b1);

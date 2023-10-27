@@ -37,5 +37,5 @@ add_executable(my_sim ./sim_main.cpp)
 verilate(my_sim COVERAGE TRACE
   INCLUDE_DIRS "."
   VERILATOR_ARGS -f ./input.vc -x-assign fast
-  VERILATOR_ARGS --timing
+  # VERILATOR_ARGS --timing
   SOURCES ./top.v)
