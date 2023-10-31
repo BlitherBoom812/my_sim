@@ -50,5 +50,5 @@ always @(*)
   begin
     data_out <= ~rst ? 0 : data_in[i] ? clk : cnt[1];
   end
-   
+
 endmodule

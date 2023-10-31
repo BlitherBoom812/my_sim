@@ -22,15 +22,14 @@ module data_gen (
 
 always @(posedge clk)
   begin
-    // if (~rst)
-    //   begin
-    //     data_out <= 0;
-    //   end
-    // else
-    //   begin
-    //     data_out <= 8'b0000_0000;
-    //   end
-    data_out <= 8'b1111_1111;
+    if (~rst)
+      begin
+        data_out <= 0;
+      end
+    else
+      begin
+        data_out <= data_out + 1;
+      end
   end
 
 endmodule

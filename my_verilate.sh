@@ -1,7 +1,7 @@
 #!/bin/bash
 # run verilator in docker. Choose version freely.
 
-verilator-docker 4.210 --Wno-COMBDLY --Wno-CASEX --Wno-CASEINCOMPLETE --Wno-STMTDLY --Wno-WIDTHCONCAT --Wno-INFINITELOOP --Wno-PINMISSING --Wno-IMPLICIT --coverage --trace -f ./input.vc -x-assign fast --exe --cc sim_main.cpp \
+verilator-docker 4.210 --Wno-UNOPT --Wno-COMBDLY --Wno-CASEX --Wno-CASEINCOMPLETE --Wno-STMTDLY --Wno-WIDTHCONCAT --Wno-INFINITELOOP --Wno-PINMISSING --Wno-IMPLICIT --coverage --trace -f ./input.vc -x-assign fast --exe --cc sim_main.cpp \
        		 top.v\
 		 clkrst.v\
 		 data_gen.v\

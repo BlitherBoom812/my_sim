@@ -20,15 +20,12 @@
 module top (
          input sys_clk,
          input sys_rst,
-         input receive_fsk_data,
-         output wire reset,
          output wire [7:0] data_in,
          output wire [7:0] data_out,
          output wire [7:0] pcm_data,
          output wire [11:0] hamming_data,
          output wire [15:0] frame_data,
          output wire fsk_data,
-         output wire [6:0] out_data,
          output wire r_fsk_data,
          output wire [11:0] r_frame_data,
          output wire frame_correct,
@@ -36,19 +33,19 @@ module top (
          output wire [12:0] r_pcm_data
        );
 
-// wire clk_2, clk_32, clk_512, rst;
+wire clk_2, clk_32, clk_512, rst;
 parameter HEADER = 6;
 
 // OFFSET need to set a big number like 17
 // if LEDs are binded to data_in / data_out
-clkrst #(.OFFSET(17))
+clkrst #(.OFFSET(0))
        cr(
          .clk(sys_clk), .rst(sys_rst),
          .clk_2(clk_2), .clk_32(clk_32), .clk_512(clk_512),
          .reset(rst)
        );
 
-data_gen dg(.clk(sys_clk), .rst(rst), .data_out(data_in));
+data_gen dg(.clk(clk_512), .rst(rst), .data_out(data_in));
 
 pcm pcm(.data_in({data_in, 5'b0}), .data_out(pcm_data));
 hamming h(.data_in(pcm_data), .data_out(hamming_data));
@@ -72,9 +69,6 @@ r_framer #(.HEADER(HEADER))
 r_hamming r_h(.data_in(r_frame_data), .data_out(r_hamming_data));
 r_pcm r_pcm(.data_in(r_hamming_data), .data_out(r_pcm_data));
 
-// assign data_out = r_pcm_data[12:5];
-// assign data_in = 8'b1111_1111;
-assign data_out = 8'b0000_0000;
-assign out_data = 7'd00;
-assign reset = rst;
+assign data_out = r_pcm_data[12:5];
+
 endmodule

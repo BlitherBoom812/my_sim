@@ -1,4 +1,3 @@
-
 // DESCRIPTION: Verilator: Verilog example module
 //
 // This file ONLY is placed under the Creative Commons Public Domain, for
@@ -65,14 +64,9 @@ int main(int argc, char** argv) {
     // Set Vtop's input signals
     top->sys_rst = !0;
     top->sys_clk = 0;
-    // top->in_small = 1;
-    // top->in_quad = 0x1234;
-    // top->in_wide[0] = 0x11111111;
-    // top->in_wide[1] = 0x22222222;
-    // top->in_wide[2] = 0x3;
 
     // Simulate until $finish
-    while (!(contextp->time() > 100 || contextp->gotFinish())) {
+    while (!(contextp->time() > 300000 || contextp->gotFinish())) {
         // Historical note, before Verilator 4.200 Verilated::gotFinish()
         // was used above in place of contextp->gotFinish().
         // Most of the contextp-> calls can use Verilated:: calls instead;
@@ -89,6 +83,9 @@ int main(int argc, char** argv) {
         // Toggle a fast (time/2 period) clock
         top->sys_clk  = !top->sys_clk;
 
+	// connect wires
+	// top->receive_fsk_data = top -> fsk_data;
+	
         // Toggle control signals on an edge that doesn't correspond
         // to where the controls are sampled; in this example we do
         // this only on a negedge of clk, because we know
