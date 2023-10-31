@@ -1,59 +1,80 @@
-// DESCRIPTION: Verilator: Verilog example module
-//
-// This file ONLY is placed under the Creative Commons Public Domain, for
-// any use, without warranty, 2003 by Wilson Snyder.
-// SPDX-License-Identifier: CC0-1.0
-// ======================================================================
+/**
+ # Module TOP
+ */
 
-// This is intended to be a complex example of several features, please also
-// see the simpler examples/make_hello_c.
+/***** Include Modules *****/
+// These lines are used for simulation with iverilog
+// Might need to be deleted in Quartus
+// `include "src/clkrst.v"
+// `include "src/data_gen.v"
+// `include "src/pcm.v"
+// `include "src/hamming.v"
+// `include "src/framer.v"
+// `include "src/fsk.v"
+// `include "src/r_fsk.v"
+// `include "src/r_framer.v"
+// `include "src/r_hamming.v"
+// `include "src/r_pcm.v"
+/***************************/
 
-`timescale 1ps/1ps
+module top (
+         input sys_clk,
+         input sys_rst,
+         input receive_fsk_data,
+         output wire reset,
+         output wire [7:0] data_in,
+         output wire [7:0] data_out,
+         output wire [7:0] pcm_data,
+         output wire [11:0] hamming_data,
+         output wire [15:0] frame_data,
+         output wire fsk_data,
+         output wire [6:0] out_data,
+         output wire r_fsk_data,
+         output wire [11:0] r_frame_data,
+         output wire frame_correct,
+         output wire [7:0] r_hamming_data,
+         output wire [12:0] r_pcm_data
+       );
 
-module top
-  (
-   // Declare some signals so we can see how I/O works
-   input 	      clk,
-   input 	      reset_l,
+// wire clk_2, clk_32, clk_512, rst;
+parameter HEADER = 6;
 
-   output wire [1:0]  out_small,
-   output wire [39:0] out_quad,
-   output wire [69:0] out_wide,
-   output reg 	      test_signal,
-   input [1:0] 	      in_small,
-   input [39:0]       in_quad,
-   input [69:0]       in_wide
-   );
+// OFFSET need to set a big number like 17
+// if LEDs are binded to data_in / data_out
+clkrst #(.OFFSET(17))
+       cr(
+         .clk(sys_clk), .rst(sys_rst),
+         .clk_2(clk_2), .clk_32(clk_32), .clk_512(clk_512),
+         .reset(rst)
+       );
 
-   initial begin
-      test_signal = 1;
-   end
-/* verilator lint_off STMTDLY */
-/* verilator lint_off INFINITELOOP */
-   initial begin
-      forever
-	#(1) test_signal = ~test_signal;
-   end
-/* verilator lint_on STMTDLY */
-   // Connect up the outputs, using some trivial logic
-   assign out_small = ~reset_l ? '0 : (in_small + 2'b1);
-   assign out_quad  = ~reset_l ? '0 : (in_quad + 40'b1);
-   assign out_wide  = ~reset_l ? '0 : (in_wide + 70'b1);
+data_gen dg(.clk(sys_clk), .rst(rst), .data_out(data_in));
 
-   // And an example sub module. The submodule will print stuff.
-   sub sub (/*AUTOINST*/
-            // Inputs
-            .clk                        (clk),
-            .reset_l                    (reset_l));
+pcm pcm(.data_in({data_in, 5'b0}), .data_out(pcm_data));
+hamming h(.data_in(pcm_data), .data_out(hamming_data));
+framer #(.HEADER(HEADER))
+       f(.data_in(hamming_data), .data_out(frame_data));
+fsk fsk(
+      .clk(clk_2), .rst(rst),
+      .data_in(frame_data), .data_out(fsk_data)
+    );
 
-   // Print some stuff as an example
-   initial begin
-      if ($test$plusargs("trace") != 0) begin
-         $display("[%0t] Tracing to logs/vlt_dump.vcd...\n", $time);
-         $dumpfile("logs/vlt_dump.vcd");
-         $dumpvars();
-      end
-      $display("[%0t] Model running...\n", $time);
-   end
+r_fsk r_fsk(
+        .clk(clk_32), .rst(rst),
+        .data_in(fsk_data), .data_out(r_fsk_data)
+      );
+r_framer #(.HEADER(HEADER))
+         r_f(
+           .clk(clk_32), .rst(rst),
+           .data_in(r_fsk_data),
+           .data_out(r_frame_data), .correct(frame_correct)
+         );
+r_hamming r_h(.data_in(r_frame_data), .data_out(r_hamming_data));
+r_pcm r_pcm(.data_in(r_hamming_data), .data_out(r_pcm_data));
 
+// assign data_out = r_pcm_data[12:5];
+// assign data_in = 8'b1111_1111;
+assign data_out = 8'b0000_0000;
+assign out_data = 7'd00;
+assign reset = rst;
 endmodule
