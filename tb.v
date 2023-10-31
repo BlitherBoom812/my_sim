@@ -26,7 +26,7 @@ module tb_top;
     wire [12:0] r_pcm_data;
 
 
-    assign receive_fsk_data = fsk_data;
+    //assign receive_fsk_data = fsk_data;
 
     initial begin
         forever #(PERIOD / 2) clk = ~clk;
@@ -41,7 +41,7 @@ module tb_top;
     ) u_top (
         .sys_clk         (clk),
         .sys_rst         (rst_n),
-        .receive_fsk_data(receive_fsk_data),
+        //.receive_fsk_data(receive_fsk_data),
 
         .data_in       (data_in[7:0]),
         .data_out      (data_out[7:0]),

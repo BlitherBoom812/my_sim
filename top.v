@@ -38,7 +38,7 @@ parameter HEADER = 6;
 
 // OFFSET need to set a big number like 17
 // if LEDs are binded to data_in / data_out
-clkrst #(.OFFSET(0))
+clkrst #(.OFFSET(2))
        cr(
          .clk(sys_clk), .rst(sys_rst),
          .clk_2(clk_2), .clk_32(clk_32), .clk_512(clk_512),

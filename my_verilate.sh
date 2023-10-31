@@ -1,6 +1,10 @@
 #!/bin/bash
 # run verilator in docker. Choose version freely.
 
+PROJECT_DIR=/mnt/d/developer/telecom/telecom1/
+cp $PROJECT_DIR/*.v .
+
+# list ignore as a variable?
 verilator-docker 4.210 --Wno-UNOPT --Wno-COMBDLY --Wno-CASEX --Wno-CASEINCOMPLETE --Wno-STMTDLY --Wno-WIDTHCONCAT --Wno-INFINITELOOP --Wno-PINMISSING --Wno-IMPLICIT --coverage --trace -f ./input.vc -x-assign fast --exe --cc sim_main.cpp \
        		 top.v\
 		 clkrst.v\
@@ -14,4 +18,4 @@ verilator-docker 4.210 --Wno-UNOPT --Wno-COMBDLY --Wno-CASEX --Wno-CASEINCOMPLET
 		 r_hamming.v\
 		 r_pcm.v
 cd obj_dir
-# make -f ./Vtop.mk
+make -f ./Vtop.mk

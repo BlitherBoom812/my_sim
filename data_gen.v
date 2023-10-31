@@ -28,7 +28,7 @@ always @(posedge clk)
       end
     else
       begin
-        data_out <= data_out + 1;
+        data_out <= data_out >= 8'd31 ? 0 : data_out + 1;
       end
   end
 
